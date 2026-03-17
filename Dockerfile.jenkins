@@ -1,0 +1,13 @@
+# Stage 1: Extraction stage
+FROM docker:latest AS docker-cli
+
+# Stage 2: Final image construction
+FROM jenkins/jenkins:lts-jdk17
+
+COPY --from=docker-cli /usr/local/bin/docker /usr/local/bin/docker
+
+# Using your GID 1001 for WSL compatibility
+RUN groupadd -g 1001 docker_host && \
+    usermod -aG docker_host jenkins
+
+USER jenkins
